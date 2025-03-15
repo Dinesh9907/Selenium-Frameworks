@@ -2,9 +2,14 @@ package Utility;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.AfterSuite;
@@ -15,12 +20,22 @@ public class DriversInit {
 	public static WebDriver driver;
 	ReadProp readString=new ReadProp();
 	String url;
+		
 	
 	@BeforeSuite
 	public void driverSelection() throws IOException {
 		url=readString.propReader("url");
+		
 		if(browser.equalsIgnoreCase("Chrome")) {
-			driver=new ChromeDriver();
+			ChromeOptions options=new ChromeOptions();
+			Map<String,Object> prefs=new HashMap<String,Object>();
+			prefs.put("credentials_enable_service", false);
+			prefs.put("profile.password_manager_enabled", false);
+			prefs.put("profile.default_content_setting_values.notifications", 2);
+			options.setExperimentalOption("prefs", prefs);
+			options.addArguments("--disable-notifications");
+			options.addArguments("--disable-popup-blocking");
+			driver=new ChromeDriver(options);
 		}
 		else if(browser.equalsIgnoreCase("Firefox")) {
 			driver=new FirefoxDriver();
